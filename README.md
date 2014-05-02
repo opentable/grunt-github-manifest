@@ -1,0 +1,2 @@
+grunt-github-manifest
+=====================
