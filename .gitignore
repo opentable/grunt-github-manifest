@@ -27,3 +27,4 @@ node_modules
 .idea
 
 tests/data/actual/.*
+tests/data/commit_history.json

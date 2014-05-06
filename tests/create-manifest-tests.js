@@ -1,5 +1,6 @@
 var fs = require('fs'),
-    should = require('should');
+    should = require('should'),
+    _ = require('underscore-node');
 
 describe('getting commit history start date information from date server', function(){
     var expected = JSON.parse(fs.readFileSync('tests/data/expected/date-request.json'));
@@ -21,8 +22,18 @@ describe('the saved manifest', function(){
         actual.should.not.be.empty;
     });
 
-    it('should contain the initial commit', function(){
+    it('should contain a commit', function(){
         var jsonBody = JSON.parse(actual);
-        jsonBody[jsonBody.length - 1].commit.committer.name.should.equal("ChrisRiddle");
+        jsonBody.length.should.be.greaterThan(0);
+    });
+
+    // This test is flaky and will eventually not work if commit count exceed 30 (since the github-api only returns 30 results)
+    // I need a better way to test that the date from the date service was retrieved successfully and passed to github
+    it('should only contain commits after the specified dates', function(){
+        var jsonBody = JSON.parse(actual);
+        var shaOfCommitThatWasBeforeTheSpecifiedDate = "74d85eeba6d8b5c485efa7f05e80abf80ca0eafa";
+
+        _.every(jsonBody, function(commit) { return commit.sha !== shaOfCommitThatWasBeforeTheSpecifiedDate;})
+            .should.equal(true);
     });
 });
