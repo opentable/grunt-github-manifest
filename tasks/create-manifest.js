@@ -16,7 +16,7 @@ module.exports = function(grunt){
 
         grunt.verbose.writeflags(options);
 
-        function getDateFromUrlAndPath(options){
+        var getDateFromUrlAndPath = function(options){
 
             var deferred = q.defer();
 
@@ -65,20 +65,22 @@ module.exports = function(grunt){
             });
 
             return deferred.promise;
-        }
+        };
 
-        function getCommitHistoryFromGithub(startDate){
+        var getCommitHistoryFromGithub = function(startDate){
             grunt.verbose.writeln(util.format("Getting commit history from %s/%s since %s", options.github.user, options.github.repo, startDate));
 
             var github = new GitHubApi({
-                version: "3.0.0",
-                host: options.github.host
+                version: "3.0.0"
                 // todo: add User Agent
             });
-            github.authenticate({
-                type: "oauth",
-                token: options.github.o_auth_token
-            });
+
+            if (options.github.o_auth_token) {
+                github.authenticate({
+                    type: "oauth",
+                    token: options.github.o_auth_token
+                });
+            }
 
             var deferred = q.defer();
 
@@ -97,9 +99,9 @@ module.exports = function(grunt){
             });
 
             return deferred.promise;
-        }
+        };
 
-        function saveManifest(commitHistory){
+        var saveManifest = function(commitHistory){
             grunt.verbose.writeln("Saving manifest to " + options.manifestPath);
 
             var deferred = q.defer();
@@ -115,7 +117,7 @@ module.exports = function(grunt){
             });
 
             return deferred.promise;
-        }
+        };
 
         if (options.commitHistoryStartDate){
 
