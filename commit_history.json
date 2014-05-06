@@ -1,0 +1,36 @@
+[
+    {
+        "sha": "bfd79f3dbd9c3199ed092c92196b54625325914e",
+        "commit": {
+            "author": {
+                "name": "Chris Ridde",
+                "email": "criddle@opentable.com",
+                "date": "2014-05-02T14:48:43Z"
+            },
+            "committer": {
+                "name": "Chris Ridde",
+                "email": "criddle@opentable.com",
+                "date": "2014-05-02T14:48:43Z"
+            },
+            "message": "Added CCB pipeline to grunt",
+            "tree": {
+                "sha": "818fa5dcb2885bc6da9c77b09e18477abf3e8ce7",
+                "url": "https://api.github.com/repos/christriddle/location-nodejs/git/trees/818fa5dcb2885bc6da9c77b09e18477abf3e8ce7"
+            },
+            "url": "https://api.github.com/repos/christriddle/location-nodejs/git/commits/bfd79f3dbd9c3199ed092c92196b54625325914e",
+            "comment_count": 0
+        },
+        "url": "https://api.github.com/repos/christriddle/location-nodejs/commits/bfd79f3dbd9c3199ed092c92196b54625325914e",
+        "html_url": "https://github.com/christriddle/location-nodejs/commit/bfd79f3dbd9c3199ed092c92196b54625325914e",
+        "comments_url": "https://api.github.com/repos/christriddle/location-nodejs/commits/bfd79f3dbd9c3199ed092c92196b54625325914e/comments",
+        "author": null,
+        "committer": null,
+        "parents": [
+            {
+                "sha": "129821b0bcdf380a545f565cd2fd30f6c04b892a",
+                "url": "https://api.github.com/repos/christriddle/location-nodejs/commits/129821b0bcdf380a545f565cd2fd30f6c04b892a",
+                "html_url": "https://github.com/christriddle/location-nodejs/commit/129821b0bcdf380a545f565cd2fd30f6c04b892a"
+            }
+        ]
+    }
+]

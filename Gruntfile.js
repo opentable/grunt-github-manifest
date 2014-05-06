@@ -26,17 +26,19 @@ module.exports = function(grunt) {
                     commitHistoryStartDate: {
                         url: "http://localhost:3000/deployment-info",
                         path: "$.lastModifiedOn"
+
                         // optional:
                         // date: "2014-01-01"
-
-                        // todo: grunt option?
+                        // todo: get grunt option by name?
                     },
-                    manifestPath: "manifest/commit_history.json",
+                    manifestPath: "commit_history.json",
                     github: {
                         o_auth_token: "f117ee2b162265dc6a598ddd2dff1ed52788dc82",
                         user: "christriddle",
-                        repo: "location-nodejs",
-                        host: null
+                        repo: "location-nodejs"
+
+                        // optional:
+                        // host: null
                     }
                 }
             }
