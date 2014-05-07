@@ -33,24 +33,6 @@ module.exports = function(grunt) {
                         repo: "grunt-github-manifest"
                     }
                 }
-            },
-
-            local_test: {
-                options: {
-                    commitHistoryStartDate: {
-                        url: "http://localhost:3000/deployment-info",
-                        path: "$.lastModifiedOn"
-
-                        // optional:
-                        // date: "2014-01-01" (specify an explicit date)
-                    },
-                    manifestPath: "commit_history.json",
-                    github: {
-                        o_auth_token: "f117ee2b162265dc6a598ddd2dff1ed52788dc82",
-                        user: "christriddle",
-                        repo: "location-nodejs"
-                    }
-                }
             }
         }
     });
