@@ -124,7 +124,7 @@ module.exports = function(grunt){
             getDateFromUrlAndPath(options.commitHistoryStartDate)
                 .then(getCommitHistoryFromGithub)
                 .then(saveManifest)
-                .fail(function(err){
+                .catch(function(err){
                     grunt.fatal.fail(err);
                 })
                 .then(done);
