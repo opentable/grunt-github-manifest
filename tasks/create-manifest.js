@@ -74,7 +74,8 @@ module.exports = function(grunt){
             var deferred = q.defer();
 
             var github = new GitHubApi({
-                version: "3.0.0"
+                version: "3.0.0",
+                proxy: options.github.proxy
                 // todo: add User Agent
             });
 
