@@ -23,7 +23,7 @@ module.exports = function(grunt){
             if (options.date){
                 grunt.verbose.writeln("Using explictly defined date");
                 deferred.resolve(new Date(options.date));
-                return;
+                return deferred.promise;
             }
 
             grunt.verbose.writeln(util.format("Getting date from service %s wiht JSONpath '%s'", options.url, options.path));
@@ -38,8 +38,7 @@ module.exports = function(grunt){
                 if (error){
                     deferred.reject(error);
                 }
-
-                if (response.statusCode === 200){
+                else if (response.statusCode === 200){
 
                     grunt.verbose.write(body);
 
@@ -56,11 +55,12 @@ module.exports = function(grunt){
                         date = new Date(body);
                     }
 
-                    grunt.verbose.writeln("Date: " + date);
                     deferred.resolve(date);
                 }
-                else{
-                    deferred.reject(new Error(util.format('The response from %s was %s', options.url, body)));
+                else {
+                    var badResponseError = new Error(util.format('The response from %s was %s', options.url, body));
+                    grunt.verbose.writeln(badResponseError);
+                    deferred.reject(badResponseError);
                 }
             });
 
@@ -68,7 +68,10 @@ module.exports = function(grunt){
         };
 
         var getCommitHistoryFromGithub = function(startDate){
+
             grunt.verbose.writeln(util.format("Getting commit history from %s/%s since %s", options.github.user, options.github.repo, startDate));
+
+            var deferred = q.defer();
 
             var github = new GitHubApi({
                 version: "3.0.0"
@@ -76,13 +79,16 @@ module.exports = function(grunt){
             });
 
             if (options.github.o_auth_token) {
-                github.authenticate({
-                    type: "oauth",
-                    token: options.github.o_auth_token
-                });
+                try{
+                    github.authenticate({
+                        type: "oauth",
+                        token: options.github.o_auth_token
+                    });
+                }
+                catch(err){
+                    deferred.reject(err);
+                }
             }
-
-            var deferred = q.defer();
 
             github.repos.getCommits({
                 user: options.github.user,
@@ -90,10 +96,13 @@ module.exports = function(grunt){
                 since: startDate
             }, function(err, res) {
                 if (err){
+                    grunt.verbose.writeln(err);
                     deferred.reject(err);
                 }
                 else{
-                    grunt.verbose.writeln(JSON.stringify(res));
+                    grunt.verbose.writeln("Github getCommits response received");
+                    var prettyPrintedJson = JSON.stringify(res, null, 4);
+                    grunt.verbose.writeln(prettyPrintedJson);
                     deferred.resolve(res);
                 }
             });
@@ -122,15 +131,22 @@ module.exports = function(grunt){
         if (options.commitHistoryStartDate){
 
             getDateFromUrlAndPath(options.commitHistoryStartDate)
-                .then(getCommitHistoryFromGithub)
-                .then(saveManifest)
-                .catch(function(err){
-                    grunt.fatal.fail(err);
+                .then(function(date){
+                    return getCommitHistoryFromGithub(date);
                 })
-                .then(done);
+                .then(function(manifest){
+                    return saveManifest(manifest);
+                })
+                .catch(function(err){
+                    grunt.fatal(err);
+                })
+                .done(function(){
+                    grunt.verbose.writeln("Done!");
+                    done();
+                });
         }
         else{
-            grunt.fatal.fail("Must supply either commitHistoryStartDateOptions or commitHistoryStartDate in task options.");
+            grunt.fatal("Must supply either commitHistoryStartDateOptions or commitHistoryStartDate in task options.");
         }
     });
 };

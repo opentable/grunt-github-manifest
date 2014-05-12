@@ -1,6 +1,7 @@
 var fs = require('fs'),
     should = require('should'),
-    _ = require('underscore-node');
+    _ = require('underscore-node'),
+    q = require('q');
 
 describe('getting commit history start date information from date server', function(){
     var expected = JSON.parse(fs.readFileSync('tests/data/expected/date-request.json'));
