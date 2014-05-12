@@ -76,7 +76,8 @@ module.exports = function(grunt){
             var github = new GitHubApi({
                 version: "3.0.0",
                 proxy: options.github.proxy,
-                port: options.github.port
+                port: options.github.port,
+                debug: options.github.debug
                 // todo: add User Agent
             });
 
