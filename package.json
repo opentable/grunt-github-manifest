@@ -8,17 +8,17 @@
     },
     "repository": {
         "type": "git",
-        "url": "git://github.com/christriddle/grunt-github-manifest.git"
+        "url": "git://github.com/opentable/grunt-github-manifest.git"
     },
     "keywords": [
         "grunt"
     ],
-    "author": "christriddle",
+    "author": "opentable",
     "license": "MIT",
     "bugs": {
-        "url": "https://github.com/christriddle/grunt-github-manifest/issues"
+        "url": "https://github.com/opentable/grunt-github-manifest/issues"
     },
-    "homepage": "https://github.com/christriddle/grunt-github-manifest",
+    "homepage": "https://github.com/opentable/grunt-github-manifest",
     "peerDependencies": {
         "grunt": "~0.4.2"
     },
