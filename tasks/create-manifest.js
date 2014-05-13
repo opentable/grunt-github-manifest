@@ -113,6 +113,50 @@ module.exports = function(grunt){
             return deferred.promise;
         };
 
+        var getCommitHistoryFromGithubNoAPi = function(startDate){
+
+            grunt.verbose.writeln(util.format("Getting commit history from %s/%s since %s", options.github.user, options.github.repo, startDate));
+
+            var deferred = q.defer();
+
+            var url = util.format("https://api.github.com/repos/%s/%s/commits?since=%s",
+                options.github.user, options.github.repo, startDate.toISOString());
+
+            if (options.github.o_auth_token) {
+                url += "&access_token=" + options.github.o_auth_token;
+            }
+            grunt.verbose.writeln("Sending GET request to: " + url);
+
+            request({
+                url: url,
+                proxy: options.github.proxy,
+                headers: {
+                    Accept: 'application/vnd.github.v3+json'
+                    // todo: add User Agent
+                },
+                method: 'GET'
+            }, function(error, response, body) {
+                if (error){
+                    grunt.verbose.writeln(error);
+                    deferred.reject(error);
+                }
+                else if (response.statusCode >= 300) {
+                    var statusCodeError = new Error("Bad status code: " + response.statusCode + ". Body: " + body);
+                    grunt.verbose.writeln(statusCodeError);
+                    deferred.reject(statusCodeError);
+                }
+                else {
+                    grunt.verbose.writeln("Github getCommits response received");
+                    var jsonBody = JSON.parse(body);
+                    var prettyPrintedJson = JSON.stringify(jsonBody, null, 4);
+                    grunt.verbose.writeln(prettyPrintedJson);
+                    deferred.resolve(res);
+                }
+            });
+
+            return deferred.promise;
+        };
+
         var saveManifest = function(commitHistory){
             grunt.verbose.writeln("Saving manifest to " + options.manifestPath);
 
@@ -135,7 +179,7 @@ module.exports = function(grunt){
 
             getDateFromUrlAndPath(options.commitHistoryStartDate)
                 .then(function(date){
-                    return getCommitHistoryFromGithub(date);
+                    return getCommitHistoryFromGithubNoAPi(date);
                 })
                 .then(function(manifest){
                     return saveManifest(manifest);
