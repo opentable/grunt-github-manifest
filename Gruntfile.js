@@ -29,7 +29,7 @@ module.exports = function(grunt) {
                     },
                     manifestPath: "tests/data/commit_history.json",
                     github: {
-                        user: "christriddle",
+                        user: "opentable",
                         repo: "grunt-github-manifest"
                     }
                 }
