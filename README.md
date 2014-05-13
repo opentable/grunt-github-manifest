@@ -2,7 +2,7 @@
 
 > Creates a manifest file from the Github commit log since a given date
 
-[![Build Status](https://travis-ci.org/christriddle/grunt-github-manifest.svg?branch=master)](https://travis-ci.org/christriddle/grunt-github-manifest)
+[![Build Status](https://travis-ci.org/opentable/grunt-github-manifest.svg?branch=master)](https://travis-ci.org/opentable/grunt-github-manifest)
 
 [![NPM](https://nodei.co/npm/grunt-github-manifest.png)](https://nodei.co/npm/grunt-github-manifest)
 
