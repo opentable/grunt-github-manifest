@@ -1,6 +1,6 @@
 {
     "name": "grunt-github-manifest",
-    "version": "0.1.7",
+    "version": "0.2.0",
     "description": "Saves to file the commit history for a Github project from a specified date",
     "main": "Gruntfile.js",
     "scripts": {
@@ -25,8 +25,7 @@
     "dependencies": {
         "request": "~2.33.0",
         "q": "~1.0.1",
-        "JSONPath": "~0.10.0",
-        "github": "~0.1.16"
+        "JSONPath": "~0.10.0"
     },
     "devDependencies": {
         "grunt-cli": "~0.1.13",

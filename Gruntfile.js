@@ -40,9 +40,18 @@ module.exports = function(grunt) {
     // These plugins provide necessary tasks.
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-mocha-test');
-    grunt.registerTask('test', ['jshint', 'start-date-server', 'create-manifest:test', 'mochaTest']);
+    grunt.registerTask('test', ['jshint', 'start-date-server', 'clean-manifest', 'create-manifest:test', 'mochaTest']);
     grunt.registerTask('local_test', ['jshint', 'create-manifest:test']);
     grunt.registerTask('default', ['test']);
     grunt.loadTasks('tasks');
     grunt.loadTasks('tests/tasks');
+
+
+    grunt.registerTask('clean-manifest', 'Deletes the manifest created by the test', function() {
+        var fs = require('fs');
+        try {
+            fs.unlinkSync('tests/data/commit_history.json');
+        }
+        catch (err) {}
+    });
 };
