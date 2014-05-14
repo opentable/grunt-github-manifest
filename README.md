@@ -35,7 +35,8 @@ grunt.initConfig({
             github: {
                 o_auth_token: "XXXXXXXX",
                 user: "christriddle",
-                repo: "grunt-github-manifest"
+                repo: "grunt-github-manifest",
+                proxy: null
             }
         }
     }
@@ -53,3 +54,4 @@ grunt.initConfig({
     - `user`
     - `repo`
     - `o_auth_token`
+    - `proxy` - Full url including port

@@ -4,7 +4,6 @@ var util = require('util'),
     request = require('request'),
     jsonPath = require('JSONPath'),
     q = require('q'),
-    GitHubApi = require('github'),
     fs = require('fs');
 
 module.exports = function(grunt){
@@ -15,6 +14,10 @@ module.exports = function(grunt){
             options = this.options({});
 
         grunt.verbose.writeflags(options);
+
+        if (!options.commitHistoryStartDate) {
+            grunt.fatal("Must supply either commitHistoryStartDateOptions or commitHistoryStartDate in task options.");
+        }
 
         var getDateFromUrlAndPath = function(options){
 
@@ -68,89 +71,37 @@ module.exports = function(grunt){
         };
 
         var getCommitHistoryFromGithub = function(startDate){
-
             grunt.verbose.writeln(util.format("Getting commit history from %s/%s since %s", options.github.user, options.github.repo, startDate));
 
-            var deferred = q.defer();
-
-            var github = new GitHubApi({
-                version: "3.0.0",
-                proxy: options.github.proxy,
-                port: options.github.port,
-                debug: options.github.debug
-                // todo: add User Agent
-            });
-
-            if (options.github.o_auth_token) {
-                try{
-                    github.authenticate({
-                        type: "oauth",
-                        token: options.github.o_auth_token
-                    });
-                }
-                catch(err){
-                    deferred.reject(err);
-                }
-            }
-
-            github.repos.getCommits({
-                user: options.github.user,
-                repo: options.github.repo,
-                since: startDate
-            }, function(err, res) {
-                if (err){
-                    grunt.verbose.writeln(err);
-                    deferred.reject(err);
-                }
-                else{
-                    grunt.verbose.writeln("Github getCommits response received");
-                    var prettyPrintedJson = JSON.stringify(res, null, 4);
-                    grunt.verbose.writeln(prettyPrintedJson);
-                    deferred.resolve(res);
-                }
-            });
-
-            return deferred.promise;
-        };
-
-        var getCommitHistoryFromGithubNoAPi = function(startDate){
-
-            grunt.verbose.writeln(util.format("Getting commit history from %s/%s since %s", options.github.user, options.github.repo, startDate));
-
-            var deferred = q.defer();
-
-            var url = util.format("https://api.github.com/repos/%s/%s/commits?since=%s",
-                options.github.user, options.github.repo, startDate.toISOString());
+            var url = util.format("https://api.github.com/repos/%s/%s/commits?since=%s", options.github.user, options.github.repo, startDate.toISOString());
 
             if (options.github.o_auth_token) {
                 url += "&access_token=" + options.github.o_auth_token;
             }
+
             grunt.verbose.writeln("Sending GET request to: " + url);
 
+            var deferred = q.defer();
+
             request({
-                url: url,
+                uri: url,
                 proxy: options.github.proxy,
                 headers: {
-                    Accept: 'application/vnd.github.v3+json'
-                    // todo: add User Agent
+                    Accept: 'application/vnd.github.v3+json',
+                    "User-Agent": "NodeJS Request"
                 },
                 method: 'GET'
             }, function(error, response, body) {
                 if (error){
-                    grunt.verbose.writeln(error);
                     deferred.reject(error);
                 }
                 else if (response.statusCode >= 300) {
-                    var statusCodeError = new Error("Bad status code: " + response.statusCode + ". Body: " + body);
-                    grunt.verbose.writeln(statusCodeError);
-                    deferred.reject(statusCodeError);
+                    deferred.reject(new Error("Bad status code: " + response.statusCode + ". Body: " + body));
                 }
                 else {
-                    grunt.verbose.writeln("Github getCommits response received");
                     var jsonBody = JSON.parse(body);
-                    var prettyPrintedJson = JSON.stringify(jsonBody, null, 4);
-                    grunt.verbose.writeln(prettyPrintedJson);
-                    deferred.resolve(res);
+                    grunt.verbose.writeln(JSON.stringify(jsonBody, null, 4));
+                    deferred.resolve(jsonBody);
                 }
             });
 
@@ -175,25 +126,19 @@ module.exports = function(grunt){
             return deferred.promise;
         };
 
-        if (options.commitHistoryStartDate){
-
-            getDateFromUrlAndPath(options.commitHistoryStartDate)
-                .then(function(date){
-                    return getCommitHistoryFromGithubNoAPi(date);
-                })
-                .then(function(manifest){
-                    return saveManifest(manifest);
-                })
-                .catch(function(err){
-                    grunt.fatal(err);
-                })
-                .done(function(){
-                    grunt.verbose.writeln("Done!");
-                    done();
-                });
-        }
-        else{
-            grunt.fatal("Must supply either commitHistoryStartDateOptions or commitHistoryStartDate in task options.");
-        }
+        getDateFromUrlAndPath(options.commitHistoryStartDate)
+            .then(function(date){
+                return getCommitHistoryFromGithub(date);
+            })
+            .then(function(manifest){
+                return saveManifest(manifest);
+            })
+            .catch(function(err){
+                grunt.fatal(err);
+            })
+            .done(function(){
+                grunt.verbose.writeln("Done!");
+                done();
+            });
     });
 };
