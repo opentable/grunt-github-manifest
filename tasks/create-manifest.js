@@ -108,12 +108,27 @@ module.exports = function(grunt){
             return deferred.promise;
         };
 
+        var summarisedManifest = function(commitHistory) {
+          var result = [];
+          commitHistory.forEach(function (history) {
+            var commit = history.commit;
+            var entry = {
+              author: commit.author.name + ' <' + commit.author.email + '>',
+              message: commit.message,
+              url: commit.url,
+            };
+
+            result.push(entry);
+          });
+          return result;
+        };
+
         var saveManifest = function(commitHistory){
             grunt.verbose.writeln("Saving manifest to " + options.manifestPath);
 
             var deferred = q.defer();
-            var prettyPrintedJson = JSON.stringify(commitHistory, null, 4);
-
+            var manifest = options.summarised ? summarisedManifest(commitHistory) : commitHistory;
+            var prettyPrintedJson = JSON.stringify(manifest, null, 4);
             fs.writeFile(options.manifestPath, prettyPrintedJson, function(err){
                 if (err){
                     grunt.verbose.writeln(err);

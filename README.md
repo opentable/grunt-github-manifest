@@ -37,7 +37,8 @@ grunt.initConfig({
                 user: "christriddle",
                 repo: "grunt-github-manifest",
                 proxy: null
-            }
+            },
+            summarised: false,
         }
     }
 })
@@ -55,3 +56,4 @@ grunt.initConfig({
     - `repo`
     - `o_auth_token`
     - `proxy` - Full url including port
+- `summarised` - Save only commit author, email, message, and url to manifest file 
